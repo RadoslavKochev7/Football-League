@@ -10,10 +10,15 @@
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.25" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.26">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FootballLeague.Core\FootballLeague.Core.csproj" />
     <ProjectReference Include="..\FootballLeague.Infrastructure\FootballLeague.Infrastructure.csproj" />
     <ProjectReference Include="..\FootballLeague.Shared\FootballLeague.Shared.csproj" />
   </ItemGroup>

@@ -22,6 +22,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+.vs*
 
 # .NET Core
 project.lock.json
@@ -52,7 +53,3 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
-/FootballLeague.API/.vs/FootballLeague.API/CopilotIndices/18.4.114.215
-/FootballLeague.API/.vs/FootballLeague.API.slnx/DesignTimeBuild
-/FootballLeague.API/.vs/FootballLeague.API.slnx/FileContentIndex
-/FootballLeague.API/.vs/FootballLeague.API.slnx/v18
