@@ -10,12 +10,12 @@ namespace FootballLeague.Core.Contracts
         /// <summary>
         /// Creates a new match
         /// </summary>
-        Task AddAsync(MatchCreateRequest request);
+        Task<MatchDto> AddAsync(MatchCreateRequest request);
 
         /// <summary>
         /// Updates an existing match
         /// </summary>
-        Task EditAsync(int id, MatchUpdateRequest request);
+        Task<MatchDto?> EditAsync(int id, MatchUpdateRequest request);
 
         /// <summary>
         /// Deletes a match by ID

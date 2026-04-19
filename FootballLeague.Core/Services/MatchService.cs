@@ -9,7 +9,7 @@ namespace FootballLeague.Core.Services
     /// </summary>
     public class MatchService(IMatchRepository matchRepository) : IMatchService
     {
-        public async Task AddAsync(MatchCreateRequest request)
+        public async Task<MatchDto> AddAsync(MatchCreateRequest request)
         {
             var match = new Match
             {
@@ -20,7 +20,9 @@ namespace FootballLeague.Core.Services
                 PlayedOn = request.PlayedOn
             };
 
-            await matchRepository.AddAsync(match);
+            MatchDto matchDto = await matchRepository.AddAsync(match);
+
+            return matchDto;
         }
 
         public async Task DeleteAsync(int matchId)
@@ -28,7 +30,7 @@ namespace FootballLeague.Core.Services
             await matchRepository.DeleteAsync(matchId);
         }
 
-        public async Task EditAsync(int id, MatchUpdateRequest request)
+        public async Task<MatchDto?> EditAsync(int id, MatchUpdateRequest request)
         {
             Match? match = await matchRepository.GetByIdAsync(id);
             if (match != null)
@@ -37,13 +39,15 @@ namespace FootballLeague.Core.Services
                 match.AwayTeamGoals = request.AwayTeamGoals;
                 match.PlayedOn = request.PlayedOn;
 
-                await matchRepository.UpdateAsync(match);
+                MatchDto? matchDto = await matchRepository.UpdateAsync(match);
+                return matchDto;
             }
+            return null;
         }
 
         public async Task<IEnumerable<MatchGetAllPlayedDto>> GetAllPlayedMatchesAsync()
         {
-            IEnumerable<Match> matches = await matchRepository.GetAllReadonlyAsync(m => m.PlayedOn.HasValue);
+            IEnumerable<Match> matches = await matchRepository.GetAllReadonlyAsync();
 
             if (!matches.Any())
                 return [];
@@ -53,7 +57,7 @@ namespace FootballLeague.Core.Services
                 m.HomeTeam?.Name ?? string.Empty, 
                 m.AwayTeam?.Name ?? string.Empty, 
                 $"{m.HomeTeamGoals}-{m.AwayTeamGoals}", 
-                m.PlayedOn.HasValue ? m.PlayedOn.Value.ToShortDateString() : string.Empty))
+                m.PlayedOn.ToShortDateString()))
                 .ToList();
         }
 

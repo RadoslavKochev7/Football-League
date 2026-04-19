@@ -12,15 +12,17 @@ namespace FootballLeague.Infrastructure.Persistence
     /// </summary>
     public class TeamRepository(FootballLeagueDbContext context) : ITeamRepository
     {
-        public async Task AddAsync(TeamAddRequest team)
+        public async Task<TeamDto> AddAsync(TeamAddRequest team)
         {
             Team teamEntity = new()
             {
                 Name = team.Name,
             };
 
-            await context.Teams.AddAsync(teamEntity);  
+            await context.Teams.AddAsync(teamEntity);
             await SaveChangesAsync();
+
+            return MapToDto(teamEntity);
         }
 
         public async Task<bool> Any(Expression<Func<Team, bool>> search)
@@ -44,11 +46,13 @@ namespace FootballLeague.Infrastructure.Persistence
             }
         }
 
-        public async Task UpdateAsync(Team team)
+        public async Task<TeamDto> UpdateAsync(Team team)
         {
             context.Teams.Update(team);
 
             await SaveChangesAsync();
+
+            return MapToDto(team);
         }
 
         public async Task UpdateAsync(IEnumerable<Team> teams)
@@ -58,16 +62,32 @@ namespace FootballLeague.Infrastructure.Persistence
             await SaveChangesAsync();
         }
 
-        protected async Task<int> SaveChangesAsync()
-        {
-            return await context.SaveChangesAsync();
-        }
-
         public async Task<IEnumerable<Team>> GetAllReadonlyAsync()
         {
             return await context.Teams
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        private async Task<int> SaveChangesAsync()
+        {
+            return await context.SaveChangesAsync();
+        }
+
+        private static TeamDto MapToDto(Team team)
+        {
+            return new TeamDto
+            {
+                Id = team.Id,
+                Name = team.Name,
+                MatchesPlayed = team.MatchesPlayed,
+                Wins = team.Wins,
+                Draws = team.Draws,
+                Losses = team.Losses,
+                GoalsFor = team.GoalsFor,
+                GoalsAgainst = team.GoalsAgainst,
+                Points = team.Points
+            };
         }
     }
 }

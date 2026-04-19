@@ -15,7 +15,7 @@ namespace FootballLeague.Core.DTOs.Match
 
         public int AwayTeamGoals { get; set; }
 
-        public DateTime? PlayedOn { get; set; }
+        public DateTime PlayedOn { get; set; }
 
         public string? HomeTeamName { get; set; }
 

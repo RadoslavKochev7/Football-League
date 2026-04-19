@@ -6,9 +6,9 @@ namespace FootballLeague.Core.Services
 {
     public class TeamService(ITeamRepository teamRepository) : ITeamService
     {
-        public async Task AddAsync(TeamAddRequest request)
+        public async Task<TeamDto> AddAsync(TeamAddRequest request)
         {
-            await teamRepository.AddAsync(request);
+            return await teamRepository.AddAsync(request);
         }
 
         public async Task DeleteAsync(int teamId)
@@ -16,7 +16,7 @@ namespace FootballLeague.Core.Services
             await teamRepository.DeleteAsync(teamId);
         }
 
-        public async Task EditAsync(int id, TeamUpdateRequest request)
+        public async Task<TeamDto?> EditAsync(int id, TeamUpdateRequest request)
         {
             Team? team = await teamRepository.GetByIdAsync(id);
 
@@ -24,8 +24,10 @@ namespace FootballLeague.Core.Services
             {
                 team.Name = request.Name;
 
-                await teamRepository.UpdateAsync(team);
+                return await teamRepository.UpdateAsync(team);
             }
+
+            return null;
         }
 
         public async Task<TeamDto?> GetByIdAsync(int teamId)

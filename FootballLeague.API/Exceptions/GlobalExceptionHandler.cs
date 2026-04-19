@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FootballLeague.API.Exceptions
 {
-    public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    public class GlobalExceptionHandler()
         : IExceptionHandler
     {
         public async ValueTask<bool> TryHandleAsync(
@@ -11,8 +11,6 @@ namespace FootballLeague.API.Exceptions
             Exception exception,
             CancellationToken cancellationToken)
         {
-            logger.LogError(exception, "Unhandled exception");
-
             var problemDetails = new ProblemDetails
             {
                 Status = StatusCodes.Status500InternalServerError,

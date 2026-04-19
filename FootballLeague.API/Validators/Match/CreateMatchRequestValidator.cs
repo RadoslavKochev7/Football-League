@@ -19,8 +19,8 @@ namespace FootballLeague.API.Validators.Match
             RuleFor(m => m.AwayTeamGoals)
                 .GreaterThanOrEqualTo(0).WithMessage("Away team goals cannot be negative.");
             RuleFor(m => m.PlayedOn)
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Played date cannot be in the future.")
-                .When(m => m.PlayedOn.HasValue);
+                .NotEmpty().WithMessage("Played date is required.")
+                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Played date cannot be in the future.");
         }
     }
 }

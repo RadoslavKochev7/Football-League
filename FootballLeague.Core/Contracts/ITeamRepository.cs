@@ -12,7 +12,7 @@ namespace FootballLeague.Core.Contracts
         /// <summary>
         /// Adds a new team to the database
         /// </summary>
-        Task AddAsync(TeamAddRequest team);
+        Task<TeamDto> AddAsync(TeamAddRequest team);
 
         /// <summary>
         /// Checks if a team with the specified name already exists
@@ -33,7 +33,7 @@ namespace FootballLeague.Core.Contracts
         /// <summary>
         /// Updates an existing team
         /// </summary>
-        Task UpdateAsync(Team team);
+        Task<TeamDto> UpdateAsync(Team team);
         
         /// <summary>
         /// Updates multiple teams

@@ -1,8 +1,8 @@
 using FootballLeague.Core.Contracts;
+using FootballLeague.Core.DTOs.Match;
 using FootballLeague.Core.Entities;
 using FootballLeague.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace FootballLeague.Infrastructure.Persistence
 {
@@ -11,10 +11,14 @@ namespace FootballLeague.Infrastructure.Persistence
     /// </summary>
     public class MatchRepository(FootballLeagueDbContext context) : IMatchRepository
     {
-        public async Task AddAsync(Match match)
+        public async Task<MatchDto> AddAsync(Match match)
         {
             await context.Matches.AddAsync(match);
             await SaveChangesAsync();
+
+            Match? addedMatch = await GetByIdAsync(match.Id);
+
+            return MapToDto(addedMatch!);
         }
 
         public async Task<Match?> GetByIdAsync(int matchId)
@@ -25,10 +29,9 @@ namespace FootballLeague.Infrastructure.Persistence
                 .FirstOrDefaultAsync(m => m.Id == matchId);
         }
 
-        public async Task<IEnumerable<Match>> GetAllReadonlyAsync(Expression<Func<Match, bool>> search)
+        public async Task<IEnumerable<Match>> GetAllReadonlyAsync()
         {
             return await context.Matches
-                .Where(search)
                 .Include(m => m.HomeTeam)
                 .Include(m => m.AwayTeam)
                 .AsNoTracking()
@@ -45,15 +48,35 @@ namespace FootballLeague.Infrastructure.Persistence
             }
         }
 
-        public async Task UpdateAsync(Match match)
+        public async Task<MatchDto?> UpdateAsync(Match match)
         {
             context.Matches.Update(match);
+
             await SaveChangesAsync();
+
+            Match? updatedMatch = await GetByIdAsync(match.Id);
+
+            return updatedMatch != null ? MapToDto(updatedMatch) : null;
         }
 
         private async Task<int> SaveChangesAsync()
         {
             return await context.SaveChangesAsync();
+        }
+
+        private static MatchDto MapToDto(Match match)
+        {
+            return new MatchDto
+            {
+                Id = match.Id,
+                HomeTeamId = match.HomeTeamId,
+                HomeTeamName = match.HomeTeam?.Name,
+                AwayTeamId = match.AwayTeamId,
+                AwayTeamName = match.AwayTeam?.Name,
+                HomeTeamGoals = match.HomeTeamGoals,
+                AwayTeamGoals = match.AwayTeamGoals,
+                PlayedOn = match.PlayedOn
+            };
         }
     }
 }

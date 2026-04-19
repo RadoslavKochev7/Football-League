@@ -9,7 +9,7 @@ namespace FootballLeague.Core.Entities
         [Key]
         public int Id { get; init; }
 
-        public DateTime? PlayedOn { get; set; }
+        public DateTime PlayedOn { get; set; }
 
         [Required]
         public int HomeTeamId { get; set; }

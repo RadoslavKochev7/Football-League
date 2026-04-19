@@ -21,7 +21,8 @@ namespace FootballLeague.API.Endpoints
                 IEnumerable<MatchGetAllPlayedDto> matches = await matchService.GetAllPlayedMatchesAsync();
                 return Results.Ok(matches);
             })
-            .WithSummary("Get all matches");
+            .WithSummary("Get all matches")
+            .Produces<IEnumerable<MatchGetAllPlayedDto>>(StatusCodes.Status200OK);
 
             // GET: /api/match/{id}
             // returns a match by its ID, if it exists
@@ -29,19 +30,22 @@ namespace FootballLeague.API.Endpoints
                 int id,
                 IMatchService matchService) =>
             {
-                var match = await matchService.GetByIdAsync(id);
+                MatchDto? match = await matchService.GetByIdAsync(id);
                 if (match == null)
-                    return Results.NotFound($"No match with Id {id}");
+                    return Results.NotFound();
 
                 return Results.Ok(match);
             })
-            .WithSummary("Get a match by ID");
+            .WithSummary("Get a match by ID")
+            .Produces<MatchDto>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
 
             // POST: /api/match
             // creates a new match and updates the statistics of the involved teams
             group.MapPost("/", async (
                 MatchCreateRequest match,
                 IMatchService matchService,
+                ITeamService teamService,
                 ITeamStatisticsService statsService,
                 IValidator<MatchCreateRequest> validator) =>
             {
@@ -49,15 +53,19 @@ namespace FootballLeague.API.Endpoints
                 if (!validationResult.IsValid)
                     return Results.BadRequest(validationResult.Errors);
 
-                await matchService.AddAsync(match);
+                if (!await teamService.TeamExists(match.HomeTeamId) 
+                || !await teamService.TeamExists(match.AwayTeamId))
+                    return Results.NotFound();
 
-                // Update team statistics only if the match has been played (i.e., PlayedOn is not null)
-                if (match.PlayedOn.HasValue)
-                    await statsService.AddStats(match.HomeTeamId, match.AwayTeamId, match.HomeTeamGoals, match.AwayTeamGoals);
+                MatchDto matchDto = await matchService.AddAsync(match);
 
-                return Results.Created();
+                await statsService.AddStats(match.HomeTeamId, match.AwayTeamId, match.HomeTeamGoals, match.AwayTeamGoals);
+
+                return Results.Created($"/api/match/{matchDto.Id}", matchDto);
             })
-            .WithSummary("Create a new match");
+            .WithSummary("Create a new match")
+            .Produces<MatchDto>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest);
 
             // PUT: /api/match/{id}
             // updates an existing match and updates the statistics of the involved teams accordingly
@@ -74,15 +82,18 @@ namespace FootballLeague.API.Endpoints
 
                 MatchDto? match = await matchService.GetByIdAsync(id);
                 if (match == null)
-                    return Results.NotFound($"No match with Id {id}");
+                    return Results.NotFound();
 
-                await matchService.EditAsync(id, updatedMatch);
+                MatchDto? result = await matchService.EditAsync(id, updatedMatch);
 
-                await UpdateTeamStatsIfNecessary(match, updatedMatch, statsService);
+                await statsService.UpdateStats(match, updatedMatch.HomeTeamGoals, updatedMatch.AwayTeamGoals);
 
-                return Results.Ok();
+                return Results.Ok(result);
             })
-            .WithSummary("Update an existing match");
+            .WithSummary("Update an existing match")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound);
 
             // DELETE: /api/match/{id}
             // deletes an existing match and reverts the statistics of the involved teams accordingly
@@ -93,29 +104,17 @@ namespace FootballLeague.API.Endpoints
             {
                 MatchDto? match = await matchService.GetByIdAsync(id);
                 if (match == null)
-                    return Results.NotFound($"No match with Id {id}");
+                    return Results.NotFound();
 
                 await matchService.DeleteAsync(id);
 
-                if (match.PlayedOn.HasValue)
-                    await statsService.RevertStats(match.HomeTeamId, match.AwayTeamId, match.HomeTeamGoals, match.AwayTeamGoals);
+                await statsService.RevertStats(match.HomeTeamId, match.AwayTeamId, match.HomeTeamGoals, match.AwayTeamGoals);
 
                 return Results.NoContent();
             })
-            .WithSummary("Delete an existing match");
-        }
-
-        private static async Task UpdateTeamStatsIfNecessary(
-            MatchDto originalMatch,
-            MatchUpdateRequest updatedMatch,
-            ITeamStatisticsService statsService)
-        {
-            if (originalMatch.PlayedOn.HasValue && updatedMatch.PlayedOn.HasValue)
-                await statsService.UpdateStats(originalMatch, updatedMatch.HomeTeamGoals, updatedMatch.AwayTeamGoals);
-            else if (!originalMatch.PlayedOn.HasValue && updatedMatch.PlayedOn.HasValue)
-                await statsService.AddStats(originalMatch.HomeTeamId, originalMatch.AwayTeamId, updatedMatch.HomeTeamGoals, updatedMatch.AwayTeamGoals);
-            else if (originalMatch.PlayedOn.HasValue && !updatedMatch.PlayedOn.HasValue)
-                await statsService.RevertStats(originalMatch.HomeTeamId, originalMatch.AwayTeamId, originalMatch.HomeTeamGoals, originalMatch.AwayTeamGoals);
+            .WithSummary("Delete an existing match")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound);
         }
     }
 }
