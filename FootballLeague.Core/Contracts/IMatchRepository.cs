@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace FootballLeague.Core.Contracts
 {
     /// <summary>
@@ -18,7 +20,7 @@ namespace FootballLeague.Core.Contracts
         /// <summary>
         /// Gets all matches
         /// </summary>
-        Task<IEnumerable<Entities.Match>> GetAllAsync();
+        Task<IEnumerable<Entities.Match>> GetAllReadonlyAsync(Expression<Func<Entities.Match, bool>> search);
 
         /// <summary>
         /// Deletes a match by its ID

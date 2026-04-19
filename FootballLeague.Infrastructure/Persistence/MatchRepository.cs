@@ -2,6 +2,7 @@ using FootballLeague.Core.Contracts;
 using FootballLeague.Core.Entities;
 using FootballLeague.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FootballLeague.Infrastructure.Persistence
 {
@@ -24,9 +25,10 @@ namespace FootballLeague.Infrastructure.Persistence
                 .FirstOrDefaultAsync(m => m.Id == matchId);
         }
 
-        public async Task<IEnumerable<Match>> GetAllAsync()
+        public async Task<IEnumerable<Match>> GetAllReadonlyAsync(Expression<Func<Match, bool>> search)
         {
             return await context.Matches
+                .Where(search)
                 .Include(m => m.HomeTeam)
                 .Include(m => m.AwayTeam)
                 .AsNoTracking()

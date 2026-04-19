@@ -34,7 +34,15 @@ namespace FootballLeague.Core.Contracts
         /// Updates an existing team
         /// </summary>
         Task UpdateAsync(Team team);
-
+        
+        /// <summary>
+        /// Updates multiple teams
+        /// </summary>
         Task UpdateAsync(IEnumerable<Team> teams);
+
+        /// <summary>
+        /// Gets all teams in a read-only manner without tracking them
+        /// </summary>
+        Task<IEnumerable<Team>> GetAllReadonlyAsync();
     }
 }

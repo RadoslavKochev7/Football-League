@@ -15,7 +15,5 @@ namespace FootballLeague.Core.Contracts
         Task DeleteAsync(int teamId);
 
         Task<TeamDto?> GetByIdAsync(int teamId);
-
-        Task UpdateTeamAsync(int id, int goalsFor, int goalsAgainst);
     }
 }

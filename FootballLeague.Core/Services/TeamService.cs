@@ -1,7 +1,6 @@
 ﻿using FootballLeague.Core.Contracts;
 using FootballLeague.Core.DTOs.Team;
 using FootballLeague.Core.Entities;
-using FootballLeague.Shared.Constants;
 
 namespace FootballLeague.Core.Services
 {
@@ -60,53 +59,6 @@ namespace FootballLeague.Core.Services
         public async Task<bool> TeamExists(int id)
         {
             return await teamRepository.Any(t => t.Id == id);
-        }
-
-        public async Task UpdateTeamAsync(int id, int goalsFor, int goalsAgainst)
-        {
-            TeamDto? team = await GetByIdAsync(id);
-
-            if (team != null)
-            {
-                team.MatchesPlayed++;
-                team.GoalsFor += goalsFor;
-                team.GoalsAgainst += goalsAgainst;
-
-                if (goalsFor > goalsAgainst)
-                {
-                    team.Wins++;
-                    team.Points += GlobalConstants.WinPoints;
-                }
-                else if (goalsAgainst > goalsFor)
-                {
-                    team.Losses++;
-                    team.Points += GlobalConstants.LossPoints;
-                }
-                else
-                {
-                    team.Draws++;
-                    team.Points += GlobalConstants.DrawPoints;
-                }
-
-                Team teamFromDto = MapDtoToEntity(team);
-
-                await teamRepository.UpdateAsync(teamFromDto);
-            }
-        }
-
-        private static Team MapDtoToEntity(TeamDto teamDto)
-        {
-            return new Team()
-            {
-                Name = teamDto.Name,
-                Points = teamDto.Points,
-                Wins = teamDto.Wins,
-                Losses = teamDto.Losses,
-                Draws = teamDto.Draws,
-                GoalsFor = teamDto.GoalsFor,
-                GoalsAgainst = teamDto.GoalsAgainst,
-                MatchesPlayed = teamDto.MatchesPlayed
-            };
         }
     }
 }

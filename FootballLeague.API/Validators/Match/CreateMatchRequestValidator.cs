@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FootballLeague.Core.DTOs.Match;
 
-namespace FootballLeague.API.Validators
+namespace FootballLeague.API.Validators.Match
 {
     public class CreateMatchRequestValidator : AbstractValidator<MatchCreateRequest>
     {
@@ -18,6 +18,9 @@ namespace FootballLeague.API.Validators
                 .GreaterThanOrEqualTo(0).WithMessage("Home team goals cannot be negative.");
             RuleFor(m => m.AwayTeamGoals)
                 .GreaterThanOrEqualTo(0).WithMessage("Away team goals cannot be negative.");
+            RuleFor(m => m.PlayedOn)
+                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Played date cannot be in the future.")
+                .When(m => m.PlayedOn.HasValue);
         }
     }
 }

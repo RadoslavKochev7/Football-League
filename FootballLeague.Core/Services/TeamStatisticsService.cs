@@ -9,24 +9,8 @@ namespace FootballLeague.Core.Services
     {
         public async Task UpdateStats(MatchDto match, int homeGoals, int awayGoals)
         {
-            Team? homeTeam = await teamRepository.GetByIdAsync(match.HomeTeamId);
-            Team? awayTeam = await teamRepository.GetByIdAsync(match.AwayTeamId);
-
-            if (homeTeam == null || awayTeam == null)
-                return;
-
-            int previousHomeGoals = match.HomeTeamGoals;
-            int previousAwayGoals = match.AwayTeamGoals;
-
-            if (previousHomeGoals == homeGoals && previousAwayGoals == awayGoals)
-            {
-                // means no change in goals, so we can skip updating stats
-                return;
-            }
-
-            // First revert previous stats with new stats
-
-
+            await RevertStats(match.HomeTeamId, match.AwayTeamId, match.HomeTeamGoals, match.AwayTeamGoals);
+            await AddStats(match.HomeTeamId, match.AwayTeamId, homeGoals, awayGoals);
         }
 
         public async Task RevertStats(int homeTeamId, int awayTeamId, int homeGoals, int awayGoals)

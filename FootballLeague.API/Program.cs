@@ -22,6 +22,7 @@ builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<ITeamStatisticsService, TeamStatisticsService>();
+builder.Services.AddScoped<IRankingService, RankingService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -40,5 +41,6 @@ app.UseExceptionHandler();
 
 app.MapTeamEndpoints();
 app.MapMatchEndpoints();
+app.MapRankingEndpoints();
 
 app.Run();

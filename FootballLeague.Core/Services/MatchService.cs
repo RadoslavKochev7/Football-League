@@ -1,7 +1,6 @@
 ﻿using FootballLeague.Core.Contracts;
 using FootballLeague.Core.DTOs.Match;
 using FootballLeague.Core.Entities;
-using FootballLeague.Shared.Constants;
 
 namespace FootballLeague.Core.Services
 {
@@ -31,34 +30,31 @@ namespace FootballLeague.Core.Services
 
         public async Task EditAsync(int id, MatchUpdateRequest request)
         {
-            var match = await matchRepository.GetByIdAsync(id);
-            if (match == null)
+            Match? match = await matchRepository.GetByIdAsync(id);
+            if (match != null)
             {
-                throw new InvalidOperationException($"Match with ID {id} not found.");
+                match.HomeTeamGoals = request.HomeTeamGoals;
+                match.AwayTeamGoals = request.AwayTeamGoals;
+                match.PlayedOn = request.PlayedOn;
+
+                await matchRepository.UpdateAsync(match);
             }
-
-            match.HomeTeamGoals = request.HomeTeamGoals;
-            match.AwayTeamGoals = request.AwayTeamGoals;
-            match.PlayedOn = request.PlayedOn;
-
-            await matchRepository.UpdateAsync(match);
         }
 
-        public async Task<IEnumerable<MatchDto>> GetAllAsync()
+        public async Task<IEnumerable<MatchGetAllPlayedDto>> GetAllPlayedMatchesAsync()
         {
-            var matches = await matchRepository.GetAllAsync();
-            
-            return matches.Select(m => new MatchDto
-            {
-                Id = m.Id,
-                HomeTeamId = m.HomeTeamId,
-                AwayTeamId = m.AwayTeamId,
-                HomeTeamGoals = m.HomeTeamGoals,
-                AwayTeamGoals = m.AwayTeamGoals,
-                PlayedOn = m.PlayedOn,
-                HomeTeamName = m.HomeTeam?.Name,
-                AwayTeamName = m.AwayTeam?.Name
-            }).ToList();
+            IEnumerable<Match> matches = await matchRepository.GetAllReadonlyAsync(m => m.PlayedOn.HasValue);
+
+            if (!matches.Any())
+                return [];
+
+            return matches.Select(m => new MatchGetAllPlayedDto(
+                m.Id, 
+                m.HomeTeam?.Name ?? string.Empty, 
+                m.AwayTeam?.Name ?? string.Empty, 
+                $"{m.HomeTeamGoals}-{m.AwayTeamGoals}", 
+                m.PlayedOn.HasValue ? m.PlayedOn.Value.ToShortDateString() : string.Empty))
+                .ToList();
         }
 
         public async Task<MatchDto?> GetByIdAsync(int matchId)
@@ -78,22 +74,6 @@ namespace FootballLeague.Core.Services
                 HomeTeamName = match.HomeTeam?.Name,
                 AwayTeamName = match.AwayTeam?.Name
             };
-        }
-
-        public async Task<bool> MatchExists(int homeTeamId, int awayTeamId)
-        {
-            var matches = await matchRepository.GetAllAsync();
-            return matches.Any(m => 
-                (m.HomeTeamId == homeTeamId && m.AwayTeamId == awayTeamId) ||
-                (m.HomeTeamId == awayTeamId && m.AwayTeamId == homeTeamId));
-        }
-
-        /// <summary>
-        /// Updates team statistics based on match results
-        /// </summary>
-        private async Task UpdateTeamStatisticsAsync(int homeTeamId, int awayTeamId, int homeGoals, int awayGoals)
-        {
-            
         }
     }
 }

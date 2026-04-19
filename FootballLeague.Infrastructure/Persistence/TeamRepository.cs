@@ -62,5 +62,12 @@ namespace FootballLeague.Infrastructure.Persistence
         {
             return await context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Team>> GetAllReadonlyAsync()
+        {
+            return await context.Teams
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

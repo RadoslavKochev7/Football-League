@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FootballLeague.Core.DTOs.Team;
 
-namespace FootballLeague.API.Validators
+namespace FootballLeague.API.Validators.Team
 {
     public class CreateTeamRequestValidator : AbstractValidator<TeamAddRequest>
     {
