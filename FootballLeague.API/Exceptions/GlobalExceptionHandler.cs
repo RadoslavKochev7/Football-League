@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using FootballLeague.Shared.Constants;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FootballLeague.API.Exceptions
@@ -14,8 +15,8 @@ namespace FootballLeague.API.Exceptions
             var problemDetails = new ProblemDetails
             {
                 Status = StatusCodes.Status500InternalServerError,
-                Title = "An unexpected error occurred",
-                Detail = "Internal Server Error"
+                Title = GlobalConstants.UnexpectedErrorMessage,
+                Detail = GlobalConstants.InternalServerErrorMessage
             };
 
             httpContext.Response.StatusCode = problemDetails.Status.Value;

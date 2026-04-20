@@ -1,5 +1,6 @@
 ﻿using FootballLeague.Core.Contracts;
 using FootballLeague.Core.DTOs.Ranking;
+using FootballLeague.Shared.Constants;
 
 namespace FootballLeague.API.Endpoints
 {
@@ -14,8 +15,8 @@ namespace FootballLeague.API.Endpoints
                 IEnumerable<RankingDto> ranking = await rankingService.GetRankingAsync();
                 return Results.Ok(ranking);
             })
-            .WithTags("Ranking")
-            .WithSummary("Gets the current ranking of all teams.");
+            .WithTags(GlobalConstants.RankingTag)
+            .WithSummary(GlobalConstants.GetRankingSummary);
         }
     }
 }

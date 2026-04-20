@@ -4,7 +4,7 @@ A .NET 8 Web API application for managing football teams, matches, and league st
 
 ## Features
 
-- Manage teams (add, edit, delete)
+- Manage teams and matches
 - Record and update matches
 - Calculate league standings
 - RESTful API endpoints
@@ -23,8 +23,8 @@ A .NET 8 Web API application for managing football teams, matches, and league st
 git clone https://github.com/RadoslavKochev7/Football-League.git cd Football-League
 
 2. **Update the database:**
-CLI: dotnet ef database update --project FootballLeague.Infrastructure --startup-project FootballLeague.API
-Package Manager Console: Update-Database -StartupProject FootballLeague.API
+- CLI: dotnet ef database update --project FootballLeague.Infrastructure --startup-project FootballLeague.API
+- Package Manager Console: Update-Database -StartupProject FootballLeague.API
 
 3. **Run the API:**
 dotnet run --project FootballLeague.API

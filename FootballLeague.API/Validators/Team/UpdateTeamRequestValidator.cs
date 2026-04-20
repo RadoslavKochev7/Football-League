@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FootballLeague.Core.DTOs.Team;
+using FootballLeague.Shared.Constants;
 
 namespace FootballLeague.API.Validators.Team
 {
@@ -8,10 +9,8 @@ namespace FootballLeague.API.Validators.Team
         public UpdateTeamRequestValidator()
         {
             RuleFor(t => t.Name)
-                .NotEmpty()
-                .WithMessage("Team name is required.")
-                .MaximumLength(100)
-                .WithMessage("Team name must not exceed 100 characters.");
+               .NotEmpty().WithMessage(GlobalConstants.TeamNameRequiredMessage)
+               .MaximumLength(GlobalConstants.TeamNameMaxLength).WithMessage(GlobalConstants.TeamNameLengthMessage);
         }
     }
 }

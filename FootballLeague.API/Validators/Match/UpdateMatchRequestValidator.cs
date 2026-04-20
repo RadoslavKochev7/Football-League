@@ -13,8 +13,8 @@ namespace FootballLeague.API.Validators.Match
             RuleFor(m => m.AwayTeamGoals)
                 .InclusiveBetween(GlobalConstants.ScoredGoalsMinValue, GlobalConstants.ScoredGoalsMaxValue);
             RuleFor(m => m.PlayedOn)
-                .NotEmpty().WithMessage("Played On date is required.")
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Played On date cannot be in the future.");
+                .NotEmpty().WithMessage(GlobalConstants.PlayedOnDateRequiredMessage)
+                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(GlobalConstants.PlayedDateInFutureMessage);
         }
     }
 }

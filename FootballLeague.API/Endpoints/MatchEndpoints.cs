@@ -2,6 +2,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using FootballLeague.Core.Contracts;
 using FootballLeague.Core.DTOs.Match;
+using FootballLeague.Shared.Constants;
 
 namespace FootballLeague.API.Endpoints
 {
@@ -11,7 +12,7 @@ namespace FootballLeague.API.Endpoints
         {
             RouteGroupBuilder group = app
                 .MapGroup("/api/match")
-                .WithTags("Matches")
+                .WithTags(GlobalConstants.MatchesTag)
                 .WithOpenApi();
 
             // GET: /api/match
@@ -21,7 +22,7 @@ namespace FootballLeague.API.Endpoints
                 IEnumerable<MatchGetAllPlayedDto> matches = await matchService.GetAllPlayedMatchesAsync();
                 return Results.Ok(matches);
             })
-            .WithSummary("Get all matches")
+            .WithSummary(GlobalConstants.GetAllMatchesSummary)
             .Produces<IEnumerable<MatchGetAllPlayedDto>>(StatusCodes.Status200OK);
 
             // GET: /api/match/{id}
@@ -36,7 +37,7 @@ namespace FootballLeague.API.Endpoints
 
                 return Results.Ok(match);
             })
-            .WithSummary("Get a match by ID")
+            .WithSummary(GlobalConstants.GetMatchByIdSummary)
             .Produces<MatchDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
 
@@ -63,7 +64,7 @@ namespace FootballLeague.API.Endpoints
 
                 return Results.Created($"/api/match/{matchDto.Id}", matchDto);
             })
-            .WithSummary("Create a new match")
+            .WithSummary(GlobalConstants.CreateMatchSummary)
             .Produces<MatchDto>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest);
 
@@ -90,7 +91,7 @@ namespace FootballLeague.API.Endpoints
 
                 return Results.Ok(result);
             })
-            .WithSummary("Update an existing match")
+            .WithSummary(GlobalConstants.UpdateMatchSummary)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
@@ -112,7 +113,7 @@ namespace FootballLeague.API.Endpoints
 
                 return Results.NoContent();
             })
-            .WithSummary("Delete an existing match")
+            .WithSummary(GlobalConstants.DeleteMatchSummary)
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
         }

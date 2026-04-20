@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FootballLeague.Core.DTOs.Match;
+using FootballLeague.Shared.Constants;
 
 namespace FootballLeague.API.Validators.Match
 {
@@ -9,18 +10,18 @@ namespace FootballLeague.API.Validators.Match
         {
             RuleFor(m => m.HomeTeamId)
                 .NotEmpty()
-                .GreaterThan(0);
+                .GreaterThan(0).WithMessage(GlobalConstants.HomeTeamIdMinValueMessage);
             RuleFor(m => m.AwayTeamId)
                 .NotEmpty()
-                .GreaterThan(0).WithMessage("Away team ID must be greater than 0.")
-                .NotEqual(m => m.HomeTeamId).WithMessage("Home team and away team cannot be the same.");
+                .GreaterThan(0).WithMessage(GlobalConstants.AwayTeamIdMinValueMessage)
+                .NotEqual(m => m.HomeTeamId).WithMessage(GlobalConstants.HomeAndAwayTeamSameMessage);
             RuleFor(m => m.HomeTeamGoals)
-                .GreaterThanOrEqualTo(0).WithMessage("Home team goals cannot be negative.");
+                .GreaterThanOrEqualTo(0).WithMessage(GlobalConstants.HomeTeamGoalsNegativeMessage);
             RuleFor(m => m.AwayTeamGoals)
-                .GreaterThanOrEqualTo(0).WithMessage("Away team goals cannot be negative.");
+                .GreaterThanOrEqualTo(0).WithMessage(GlobalConstants.AwayTeamGoalsNegativeMessage);
             RuleFor(m => m.PlayedOn)
-                .NotEmpty().WithMessage("Played date is required.")
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Played date cannot be in the future.");
+                .NotEmpty().WithMessage(GlobalConstants.PlayedOnDateRequiredMessage)
+                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(GlobalConstants.PlayedDateInFutureMessage);
         }
     }
 }
